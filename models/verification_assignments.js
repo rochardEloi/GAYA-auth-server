@@ -4,7 +4,7 @@ const GetAssignment = (input)=>{
     return new Promise((resolve, reject) => {
         const inputQuery = input.email ? `email='${input.email}'` : `phone='${input.phone}'`
         
-        const query = `select * from verification_assignments where ${inputQuery}  and provider_id=${input.provider_id}` 
+        const query = `select * from verification_assignments where ${inputQuery}  and provider_id='${input.provider_id}'` 
           
         client.query(query).then(async (result) => {
             //console.log(result.rows)

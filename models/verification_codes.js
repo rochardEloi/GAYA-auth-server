@@ -16,7 +16,7 @@ const GetVerificationCodes = (organization_id) => {
                         JOIN
                             providers AS p
                         ON
-                            vc.provider_id = p.id where vc.organization_id = ${organization_id} ORDER BY last_update DESC;
+                            vc.provider_id = p.id where vc.organization_id = '${organization_id}' ORDER BY last_update DESC;
         `
 
         client.query(query).then(async (result) => {
@@ -34,7 +34,7 @@ const GetVerificationCodes = (organization_id) => {
 
 const CreateOrUpdateVerificationCodes = (input) => {
     return new Promise((resolve, reject) => {
-        const query = `select * from verification_codes where provider_id=${input.provider_id}  and organization_id=${input.organization_id}`
+        const query = `select * from verification_codes where provider_id='${input.provider_id}'  and organization_id='${input.organization_id}'`
 
         client.query(query).then(async (result) => {
             //console.log(result.rows)
@@ -42,17 +42,17 @@ const CreateOrUpdateVerificationCodes = (input) => {
             //console.log(result.rowCount)
             try {
                 if (result.rowCount === 0) {
-                    const organizationExist = await client.query(`select * from organizations where id=${input.organization_id}`)
-                    const providerExist = await client.query(`select * from providers where id=${input.provider_id}`)
+                    const organizationExist = await client.query(`select * from organizations where id='${input.organization_id}'`)
+                    const providerExist = await client.query(`select * from providers where id='${input.provider_id}'`)
                     
                     if(organizationExist.rowCount ===0 )return reject({message : "organization_id not found"})
                     
                     if(providerExist.rowCount ===0 )return reject({message : "provider_id not found"})
                     
-                    const create = await client.query(`insert into verification_codes (provider_id, organization_id, last_update, code_value) values (${input.provider_id}, ${input.organization_id}, CURRENT_TIMESTAMP, '${input.code_value}')`)
+                    const create = await client.query(`insert into verification_codes (provider_id, organization_id, last_update, code_value) values ('${input.provider_id}', '${input.organization_id}', CURRENT_TIMESTAMP, '${input.code_value}')`)
                     resolve(create)
                 }else{
-                   const update =  await client.query(`update verification_codes set code_value='${input.code_value}',last_update=CURRENT_TIMESTAMP  where provider_id=${input.provider_id} and organization_id=${input.organization_id}`)  
+                   const update =  await client.query(`update verification_codes set code_value='${input.code_value}',last_update=CURRENT_TIMESTAMP  where provider_id='${input.provider_id}' and organization_id='${input.organization_id}'`)  
                    resolve(update) 
                 }
             } catch (error) {
